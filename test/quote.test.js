@@ -63,6 +63,14 @@ test('stocks cannot use the five reserved crypto spots', () => {
   assert.equal(SW.addDecision(roomy, { symbol: 'ZZ', crypto: false }).ok, true);
 });
 
+test('ten blank spaces stay open at the end until the list is nearly full', () => {
+  assert.equal(SW.OPEN_SLOTS, 10);
+  assert.equal(SW.openSlots(SW.PRELOAD.length), 10);
+  assert.equal(SW.openSlots(20), 10);
+  assert.equal(SW.openSlots(25), 5);
+  assert.equal(SW.openSlots(30), 0);
+});
+
 test('indexes stay in Dow, Nasdaq, S&P order above the stocks', () => {
   const split = SW.sections([
     { symbol: '^GSPC', label: 'S&P', crypto: false },

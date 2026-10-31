@@ -9,6 +9,7 @@
   var MAX_SYMBOLS = 30;
   var CRYPTO_RESERVED = 5;
   var MAX_STOCKS = MAX_SYMBOLS - CRYPTO_RESERVED;
+  var OPEN_SLOTS = 10;
 
   var ALIASES = {
     'DOW': alias('^DJI', 'Dow', false),
@@ -178,6 +179,12 @@
     for (var j = 0; j < items.length; j++) if (!items[j].crypto) stocks++;
     if (!entry.crypto && stocks >= MAX_STOCKS) return { ok: false, reason: 'stocks-full' };
     return { ok: true };
+  }
+
+  function openSlots(count) {
+    var room = MAX_SYMBOLS - count;
+    if (room < 0) room = 0;
+    return room < OPEN_SLOTS ? room : OPEN_SLOTS;
   }
 
   function messageFor(reason, symbol) {
@@ -402,6 +409,8 @@
     MAX_SYMBOLS: MAX_SYMBOLS,
     CRYPTO_RESERVED: CRYPTO_RESERVED,
     MAX_STOCKS: MAX_STOCKS,
+    OPEN_SLOTS: OPEN_SLOTS,
+    openSlots: openSlots,
     PRELOAD: PRELOAD,
     sortKey: sortKey,
     resolveInput: resolveInput,

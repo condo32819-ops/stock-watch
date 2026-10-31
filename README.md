@@ -6,7 +6,7 @@ Live site: https://condo32819-ops.github.io/stock-watch/
 
 Dow, Nasdaq, and the S&P 500 are at the top, in that order. Stocks follow, A to Z. Crypto is in its own list underneath, also A to Z. Bitcoin and Ether start in that list. The phone keeps the list. Stocks stop at 25 names so at least five spots stay open for crypto, inside a 30-name cap.
 
-You can type a ticker, or Dow, Nasdaq, S&P, Bitcoin, or Ether.
+At the bottom there are 10 blank lines. Type a ticker in one to add a stock or a crypto. Dow, Nasdaq, S&P, Bitcoin, and Ether work too.
 
 ## Add it to an iPhone home screen
 
