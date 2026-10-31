@@ -118,6 +118,9 @@ h2 {
   font-weight: 700;
 }
 
+#indexes-h { margin-top: 8px; }
+
+#stocks-h,
 #crypto-h {
   margin-top: 28px;
   padding-top: 18px;

@@ -30,8 +30,12 @@
     </div>
   </header>
   <main class="wrap">
+    <section aria-labelledby="indexes-h">
+      <h2 id="indexes-h">Indexes</h2>
+      <div id="indexes"></div>
+    </section>
     <section aria-labelledby="stocks-h">
-      <h2 id="stocks-h">Stocks and indexes</h2>
+      <h2 id="stocks-h">Stocks</h2>
       <div id="stocks"></div>
     </section>
     <section aria-labelledby="crypto-h">
@@ -43,12 +47,12 @@
       <div class="add-row">
         <input id="symbol" name="symbol" type="text" maxlength="24" enterkeyhint="done"
           autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off"
-          placeholder="AAPL, Dow, Bitcoin">
+          placeholder="AAPL, Dow, S&P">
         <button id="add-btn" type="submit">Add</button>
       </div>
       <p id="form-msg" class="form-msg" role="alert"></p>
       <p id="capacity" class="hint"></p>
-      <p class="hint">Type a ticker, or Dow, Nasdaq, Bitcoin, or Ether. Stocks stop at 25 so crypto keeps at least five spots. The list is saved on this phone.</p>
+      <p class="hint">Dow, Nasdaq, and S&P stay at the top. Stocks follow in A to Z order. Type a ticker, or Dow, Nasdaq, S&P, Bitcoin, or Ether. Stocks stop at 25 so crypto keeps at least five spots. The list is saved on this phone.</p>
     </form>
   </main>
   <noscript>

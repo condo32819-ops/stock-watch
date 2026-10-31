@@ -4,9 +4,9 @@ A phone-first watchlist. Each name shows the latest price and how many dollars (
 
 Live site: https://condo32819-ops.github.io/stock-watch/
 
-Stocks and indexes are on top, A to Z. Crypto is in its own list underneath, also A to Z. Bitcoin and Ether start in that list. The phone keeps the list. Stocks stop at 25 names so at least five spots stay open for crypto, inside a 30-name cap.
+Dow, Nasdaq, and the S&P 500 are at the top, in that order. Stocks follow, A to Z. Crypto is in its own list underneath, also A to Z. Bitcoin and Ether start in that list. The phone keeps the list. Stocks stop at 25 names so at least five spots stay open for crypto, inside a 30-name cap.
 
-You can type a ticker, or Dow, Nasdaq, Bitcoin, or Ether.
+You can type a ticker, or Dow, Nasdaq, S&P, Bitcoin, or Ether.
 
 ## Add it to an iPhone home screen
 
