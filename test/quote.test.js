@@ -4,20 +4,23 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const SW = require('../quote.js');
 
-test('preload splits into stocks and crypto and sorts by display symbol', () => {
-  const { stocks, crypto } = SW.sections(SW.PRELOAD);
+test('preload puts Dow, Nasdaq, and S&P first, then stocks A to Z', () => {
+  const { indexes, stocks, crypto } = SW.sections(SW.PRELOAD);
+  assert.deepEqual(indexes.map((item) => SW.sortKey(item.symbol)), ['DJI', 'IXIC', 'SPX']);
+  assert.deepEqual(indexes.map((item) => item.label), ['Dow', 'Nasdaq', 'S&P']);
   assert.deepEqual(stocks.map((item) => SW.sortKey(item.symbol)), [
-    'AAPL', 'AMD', 'APH', 'AVGO', 'CAPR', 'COMP', 'DJI', 'IXIC',
+    'AAPL', 'AMD', 'APH', 'AVGO', 'CAPR', 'COMP',
     'NVDA', 'SPCX', 'TMDX', 'V', 'VRT', 'VZ'
   ]);
   assert.deepEqual(crypto.map((item) => SW.sortKey(item.symbol)), ['BTC', 'ETH']);
-  assert.equal(stocks.length + crypto.length, 16);
-  assert.ok(stocks.length <= SW.MAX_STOCKS);
+  assert.equal(indexes.length + stocks.length + crypto.length, 17);
+  assert.ok(indexes.length + stocks.length <= SW.MAX_STOCKS);
 });
 
 test('indexes and crypto sort without the caret or -USD', () => {
   assert.equal(SW.sortKey('^DJI'), 'DJI');
   assert.equal(SW.sortKey('^IXIC'), 'IXIC');
+  assert.equal(SW.sortKey('^GSPC'), 'SPX');
   assert.equal(SW.sortKey('BTC-USD'), 'BTC');
   assert.equal(SW.sortKey('ETH-USD'), 'ETH');
   assert.equal(SW.sortKey('aapl'), 'AAPL');
@@ -28,6 +31,9 @@ test('friendly names resolve to canonical symbols', () => {
     ok: true, symbol: '^DJI', label: 'Dow', crypto: false, locked: true
   });
   assert.equal(SW.resolveInput('Nasdaq Composite').symbol, '^IXIC');
+  assert.equal(SW.resolveInput('s&p').symbol, '^GSPC');
+  assert.equal(SW.resolveInput('S&P 500').label, 'S&P');
+  assert.equal(SW.resolveInput('spx').crypto, false);
   assert.equal(SW.resolveInput('bitcoin').crypto, true);
   assert.equal(SW.resolveInput('ETH').symbol, 'ETH-USD');
   assert.equal(SW.resolveInput('aapl').symbol, 'AAPL');
@@ -57,14 +63,18 @@ test('stocks cannot use the five reserved crypto spots', () => {
   assert.equal(SW.addDecision(roomy, { symbol: 'ZZ', crypto: false }).ok, true);
 });
 
-test('crypto stays in its own section even when the symbol sorts earlier', () => {
+test('indexes stay in Dow, Nasdaq, S&P order above the stocks', () => {
   const split = SW.sections([
+    { symbol: '^GSPC', label: 'S&P', crypto: false },
     { symbol: 'BTC-USD', crypto: true },
     { symbol: 'AAPL', crypto: false },
     { symbol: '^DJI', label: 'Dow', crypto: false },
+    { symbol: 'NVDA', crypto: false },
+    { symbol: '^IXIC', label: 'Nasdaq', crypto: false },
     { symbol: 'ETH-USD', crypto: true }
   ]);
-  assert.deepEqual(split.stocks.map((item) => item.symbol), ['AAPL', '^DJI']);
+  assert.deepEqual(split.indexes.map((item) => item.symbol), ['^DJI', '^IXIC', '^GSPC']);
+  assert.deepEqual(split.stocks.map((item) => item.symbol), ['AAPL', 'NVDA']);
   assert.deepEqual(split.crypto.map((item) => item.symbol), ['BTC-USD', 'ETH-USD']);
 });
 

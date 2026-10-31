@@ -20,6 +20,13 @@
     'NASDAQ COMPOSITE': alias('^IXIC', 'Nasdaq', false),
     'IXIC': alias('^IXIC', 'Nasdaq', false),
     '^IXIC': alias('^IXIC', 'Nasdaq', false),
+    'S&P': alias('^GSPC', 'S&P', false),
+    'S&P 500': alias('^GSPC', 'S&P', false),
+    'S&P500': alias('^GSPC', 'S&P', false),
+    'SPX': alias('^GSPC', 'S&P', false),
+    'SP500': alias('^GSPC', 'S&P', false),
+    'GSPC': alias('^GSPC', 'S&P', false),
+    '^GSPC': alias('^GSPC', 'S&P', false),
     'BITCOIN': alias('BTC-USD', 'Bitcoin', true),
     'BTC': alias('BTC-USD', 'Bitcoin', true),
     'BTCUSD': alias('BTC-USD', 'Bitcoin', true),
@@ -34,6 +41,7 @@
   var LABELS = {
     '^DJI': 'Dow',
     '^IXIC': 'Nasdaq',
+    '^GSPC': 'S&P',
     'BTC-USD': 'Bitcoin',
     'ETH-USD': 'Ether'
   };
@@ -74,6 +82,7 @@
     { symbol: 'AVGO' },
     { symbol: '^DJI', label: 'Dow' },
     { symbol: '^IXIC', label: 'Nasdaq' },
+    { symbol: '^GSPC', label: 'S&P' },
     { symbol: 'BTC-USD', label: 'Bitcoin', crypto: true },
     { symbol: 'ETH-USD', label: 'Ether', crypto: true }
   ];
@@ -86,6 +95,7 @@
     var s = String(symbol || '').trim().toUpperCase();
     if (s.charAt(0) === '^') s = s.slice(1);
     if (s.slice(-4) === '-USD') s = s.slice(0, -4);
+    if (s === 'GSPC') return 'SPX';
     return s;
   }
 
@@ -135,16 +145,28 @@
     return sortKey(a.symbol).localeCompare(sortKey(b.symbol), 'en', { sensitivity: 'base' });
   }
 
+  var INDEX_RANK = { '^DJI': 0, '^IXIC': 1, '^GSPC': 2 };
+
+  function byIndex(a, b) {
+    var ia = Object.prototype.hasOwnProperty.call(INDEX_RANK, a.symbol) ? INDEX_RANK[a.symbol] : 100;
+    var ib = Object.prototype.hasOwnProperty.call(INDEX_RANK, b.symbol) ? INDEX_RANK[b.symbol] : 100;
+    if (ia !== ib) return ia - ib;
+    return bySymbol(a, b);
+  }
+
   function sections(items) {
+    var indexes = [];
     var stocks = [];
     var crypto = [];
     for (var i = 0; i < items.length; i++) {
       if (items[i].crypto) crypto.push(items[i]);
+      else if (String(items[i].symbol).charAt(0) === '^') indexes.push(items[i]);
       else stocks.push(items[i]);
     }
+    indexes.sort(byIndex);
     stocks.sort(bySymbol);
     crypto.sort(bySymbol);
-    return { stocks: stocks, crypto: crypto };
+    return { indexes: indexes, stocks: stocks, crypto: crypto };
   }
 
   function addDecision(items, entry) {
@@ -162,7 +184,7 @@
     if (reason === 'duplicate') return sortKey(symbol) + ' is already on the list.';
     if (reason === 'stocks-full') return 'Stocks are full at 25. Those spots stay open for crypto.';
     if (reason === 'full') return 'The list is full at 30.';
-    if (reason === 'invalid') return 'Type a ticker, or Dow, Nasdaq, Bitcoin, or Ether.';
+    if (reason === 'invalid') return 'Type a ticker, or Dow, Nasdaq, S&P, Bitcoin, or Ether.';
     return '';
   }
 

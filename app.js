@@ -19,6 +19,7 @@
   var bannerEl = document.getElementById('banner');
   var pullEl = document.getElementById('pull');
   var refreshBtn = document.getElementById('refresh');
+  var indexesEl = document.getElementById('indexes');
   var stocksEl = document.getElementById('stocks');
   var cryptoEl = document.getElementById('crypto');
   var form = document.getElementById('add-form');
@@ -34,18 +35,37 @@
     return node;
   }
 
+  function freshList() {
+    return SW.PRELOAD.map(function (item) { return Object.assign({}, item); });
+  }
+
   function loadItems() {
+    var items;
+    var saved = false;
     try {
       var raw = localStorage.getItem(LIST_KEY);
-      if (raw == null) return SW.PRELOAD.map(function (item) { return Object.assign({}, item); });
-      var data = JSON.parse(raw);
-      if (!data || !Array.isArray(data.items)) {
-        return SW.PRELOAD.map(function (item) { return Object.assign({}, item); });
+      if (raw == null) {
+        items = freshList();
+      } else {
+        var data = JSON.parse(raw);
+        if (!data || !Array.isArray(data.items)) items = freshList();
+        else {
+          saved = true;
+          items = data.items.map(SW.normalizeItem).filter(Boolean);
+        }
       }
-      return data.items.map(SW.normalizeItem).filter(Boolean);
     } catch (err) {
-      return SW.PRELOAD.map(function (item) { return Object.assign({}, item); });
+      items = freshList();
     }
+    try {
+      if (localStorage.getItem('stock-watch-spx') !== '1') {
+        var hasSpx = items.some(function (item) { return item.symbol === '^GSPC'; });
+        if (!hasSpx) items.push({ symbol: '^GSPC', label: 'S&P', crypto: false });
+        localStorage.setItem('stock-watch-spx', '1');
+        if (saved) localStorage.setItem(LIST_KEY, JSON.stringify({ items: items }));
+      }
+    } catch (err) {}
+    return items;
   }
 
   function saveItems() {
@@ -95,8 +115,8 @@
     }
     renderMarket();
     var split = SW.sections(items);
-    capacityEl.textContent = split.stocks.length + ' of 25 stocks and indexes · ' +
-      split.crypto.length + ' crypto · 30 max';
+    capacityEl.textContent = split.indexes.length + ' indexes · ' +
+      split.stocks.length + ' stocks · ' + split.crypto.length + ' crypto · 30 max';
   }
 
   function placeholder() {
@@ -149,6 +169,7 @@
 
   function renderLists() {
     var split = SW.sections(items);
+    renderList(indexesEl, split.indexes, 'No indexes yet.');
     renderList(stocksEl, split.stocks, 'No stocks yet.');
     renderList(cryptoEl, split.crypto, 'No crypto yet.');
   }

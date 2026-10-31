@@ -1,6 +1,6 @@
 'use strict';
 
-var CACHE = 'stock-watch-v1';
+var CACHE = 'stock-watch-v2';
 var ASSETS = [
   './',
   './index.html',
