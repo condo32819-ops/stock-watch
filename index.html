@@ -42,18 +42,13 @@
       <h2 id="crypto-h">Crypto</h2>
       <div id="crypto"></div>
     </section>
-    <form id="add-form">
-      <label for="symbol">Add a symbol</label>
-      <div class="add-row">
-        <input id="symbol" name="symbol" type="text" maxlength="24" enterkeyhint="done"
-          autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off"
-          placeholder="AAPL, Dow, S&P">
-        <button id="add-btn" type="submit">Add</button>
-      </div>
+    <section id="add-slots" aria-labelledby="add-h">
+      <h2 id="add-h">Add by symbol</h2>
+      <p class="hint">Type a ticker in a blank line. Dow, Nasdaq, S&P, Bitcoin, and Ether work too.</p>
+      <div id="slots"></div>
       <p id="form-msg" class="form-msg" role="alert"></p>
       <p id="capacity" class="hint"></p>
-      <p class="hint">Dow, Nasdaq, and S&P stay at the top. Stocks follow in A to Z order. Type a ticker, or Dow, Nasdaq, S&P, Bitcoin, or Ether. Stocks stop at 25 so crypto keeps at least five spots. The list is saved on this phone.</p>
-    </form>
+    </section>
   </main>
   <noscript>
     <p class="noscript">Turn on JavaScript to load prices. The list stays on this phone.</p>

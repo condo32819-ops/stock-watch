@@ -22,10 +22,9 @@
   var indexesEl = document.getElementById('indexes');
   var stocksEl = document.getElementById('stocks');
   var cryptoEl = document.getElementById('crypto');
-  var form = document.getElementById('add-form');
-  var input = document.getElementById('symbol');
-  var addBtn = document.getElementById('add-btn');
+  var slotsEl = document.getElementById('slots');
   var formMsg = document.getElementById('form-msg');
+  var slotInputs = [];
   var capacityEl = document.getElementById('capacity');
 
   function el(tag, className, text) {
@@ -114,6 +113,7 @@
       bannerEl.textContent = '';
     }
     renderMarket();
+    showSlots();
     var split = SW.sections(items);
     capacityEl.textContent = split.indexes.length + ' indexes · ' +
       split.stocks.length + ' stocks · ' + split.crypto.length + ' crypto · 30 max';
@@ -297,15 +297,27 @@
     }
   }
 
-  form.addEventListener('submit', async function (event) {
-    event.preventDefault();
-    if (adding) return;
-    var raw = input.value;
+  function showSlots() {
+    var n = SW.openSlots(items.length);
+    var heading = document.getElementById('add-h');
+    var note = document.querySelector('#add-slots .hint');
+    if (heading) heading.hidden = n === 0;
+    if (note) note.hidden = n === 0;
+    slotInputs.forEach(function (field, i) {
+      var hide = i >= n;
+      field.hidden = hide;
+      if (hide) field.value = '';
+    });
+  }
+
+  async function submitSlot(field) {
+    var raw = field.value;
+    if (adding || !raw.trim()) return;
     var quick = SW.resolveInput(raw);
     formMsg.classList.remove('bad');
     if (!quick.ok) {
-      formMsg.textContent = quick.reason === 'empty' ? '' : SW.messageFor(quick.reason);
-      if (quick.reason !== 'empty') formMsg.classList.add('bad');
+      formMsg.textContent = SW.messageFor(quick.reason);
+      formMsg.classList.add('bad');
       return;
     }
     var early = SW.addDecision(items, quick);
@@ -315,7 +327,7 @@
       return;
     }
     adding = true;
-    addBtn.disabled = true;
+    field.disabled = true;
     if (!quick.locked) formMsg.textContent = 'Checking\u2026';
     try {
       var resolved = await resolveForAdd(raw);
@@ -336,17 +348,46 @@
         crypto: resolved.crypto
       });
       saveItems();
-      input.value = '';
+      field.value = '';
       formMsg.textContent = '';
-      input.blur();
       renderLists();
       renderStatus();
       refresh();
     } finally {
       adding = false;
-      addBtn.disabled = false;
+      field.disabled = false;
+      showSlots();
     }
-  });
+  }
+
+  function buildSlots() {
+    slotsEl.replaceChildren();
+    for (var i = 0; i < SW.OPEN_SLOTS; i++) {
+      var field = el('input', 'slot');
+      field.type = 'text';
+      field.maxLength = 24;
+      field.placeholder = 'Symbol';
+      field.enterKeyHint = 'done';
+      field.autocapitalize = 'characters';
+      field.autocorrect = 'off';
+      field.spellcheck = false;
+      field.autocomplete = 'off';
+      field.setAttribute('aria-label', 'Blank line ' + (i + 1) + ' for a symbol');
+      field.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          submitSlot(event.currentTarget);
+        }
+      });
+      field.addEventListener('change', function (event) {
+        submitSlot(event.currentTarget);
+      });
+      slotsEl.appendChild(field);
+      slotInputs.push(field);
+    }
+  }
+
+  buildSlots();
 
   refreshBtn.addEventListener('click', function () { refresh(); });
 
