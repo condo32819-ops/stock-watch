@@ -140,7 +140,7 @@
     figures.appendChild(el('div', 'price', price));
     figures.appendChild(el('div', 'change', change));
 
-    var remove = el('button', 'remove', 'Remove');
+    var remove = el('button', 'remove', '\u00d7');
     remove.type = 'button';
     remove.setAttribute('aria-label', 'Remove ' + shown);
     remove.addEventListener('click', function () {
