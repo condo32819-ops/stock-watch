@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#14323f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Stocks">
+  <title>Stock Watch</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icon-180.png">
+  <link rel="icon" href="./icon-192.png" type="image/png">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header>
+    <div class="wrap head">
+      <div class="title-row">
+        <h1>Stock Watch</h1>
+        <button id="refresh" type="button">Refresh</button>
+      </div>
+      <p id="asof" class="asof">As of —</p>
+    </div>
+    <div class="wrap sub">
+      <p id="market" class="market">Checking the market…</p>
+      <p id="pull" class="pull" hidden>Pull to refresh</p>
+      <p id="banner" class="banner" role="status" hidden></p>
+    </div>
+  </header>
+  <main class="wrap">
+    <section aria-labelledby="stocks-h">
+      <h2 id="stocks-h">Stocks and indexes</h2>
+      <div id="stocks"></div>
+    </section>
+    <section aria-labelledby="crypto-h">
+      <h2 id="crypto-h">Crypto</h2>
+      <div id="crypto"></div>
+    </section>
+    <form id="add-form">
+      <label for="symbol">Add a symbol</label>
+      <div class="add-row">
+        <input id="symbol" name="symbol" type="text" maxlength="24" enterkeyhint="done"
+          autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off"
+          placeholder="AAPL, Dow, Bitcoin">
+        <button id="add-btn" type="submit">Add</button>
+      </div>
+      <p id="form-msg" class="form-msg" role="alert"></p>
+      <p id="capacity" class="hint"></p>
+      <p class="hint">Type a ticker, or Dow, Nasdaq, Bitcoin, or Ether. Stocks stop at 25 so crypto keeps at least five spots. The list is saved on this phone.</p>
+    </form>
+  </main>
+  <noscript>
+    <p class="noscript">Turn on JavaScript to load prices. The list stays on this phone.</p>
+  </noscript>
+  <script src="./quote.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
